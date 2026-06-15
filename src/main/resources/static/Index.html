@@ -1,19 +1,55 @@
 <!DOCTYPE html>
-<html>
-<body>
-<h1>Sensores</h1>
-<div id="status">Conectando...</div>
-<div id="cards"></div>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de Sensores</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Monitor de Sensores em Tempo Real</h1>
+    <div id="status" class="alert alert-info text-center">Conectando...</div>
+
+    <div class="row" id="cards">
+    </div>
+</div>
+
 <script>
     const source = new EventSource('/sensores/stream');
-    const status = document.getElementById('status');
+    const statusDiv = document.getElementById('status');
+    const cardsDiv = document.getElementById('cards');
 
-    source.onopen = () => status.innerText = 'Conectado';
-    source.onerror = () => status.innerText = 'Reconectando...';
+    source.onopen = () => {
+        statusDiv.className = 'alert alert-success text-center';
+        statusDiv.innerText = 'Conectado ao Servidor';
+    };
+
+    source.onerror = () => {
+        statusDiv.className = 'alert alert-danger text-center';
+        statusDiv.innerText = 'Reconectando...';
+    };
 
     source.addEventListener('temperatura', (e) => {
         const data = JSON.parse(e.data);
-        console.log(data);
+
+        let card = document.getElementById(`card-${data.sensor}`);
+        if (!card) {
+            card = document.createElement('div');
+            card.id = `card-${data.sensor}`;
+            card.className = 'col-md-4 mb-3';
+            cardsDiv.appendChild(card);
+        }
+
+        card.innerHTML = `
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-capitalize">${data.sensor}</h5>
+                    <p class="card-text display-6">${data.valor.toFixed(2)}°C</p>
+                    <p class="card-text text-muted small">Atualizado: ${new Date(data.timestamp).toLocaleTimeString()}</p>
+                </div>
+            </div>
+        `;
     });
 </script>
 </body>
