@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Sensores</h1>
+<div id="status">Conectando...</div>
+<div id="cards"></div>
+<script>
+    const source = new EventSource('/sensores/stream');
+    const status = document.getElementById('status');
+
+    source.onopen = () => status.innerText = 'Conectado';
+    source.onerror = () => status.innerText = 'Reconectando...';
+
+    source.addEventListener('temperatura', (e) => {
+        const data = JSON.parse(e.data);
+        console.log(data);
+    });
+</script>
+</body>
+</html>
