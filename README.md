@@ -29,7 +29,7 @@ Certifique-se de ter instalado em sua máquina:
 1. Clone o repositório:
 
 ```bash
-git clone <url-do-seu-repositorio>
+git clone https://github.com/Sr0Felps/SSE.git
 ```
 
 2. Navegue até a pasta do projeto:
